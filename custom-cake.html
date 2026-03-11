@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Design Your Cake – Sweet Crumbs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-md sticky-top sc-navbar">
+  <div class="container-xl">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <i class="bi bi-cake2 text-primary fs-4"></i> Sweet Crumbs
+    </a>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a href="cart.html" class="btn btn-link position-relative text-dark p-2">
+        <i class="bi bi-cart3 fs-5"></i>
+        <span class="badge bg-primary rounded-pill cart-badge">3</span>
+      </a>
+      <ul class="navbar-nav d-none d-md-flex flex-row me-2">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="catalog.html">Our Products</a></li>
+        <li class="nav-item"><a class="nav-link active" href="custom-cake.html">Custom Cakes</a></li>
+        <li class="nav-item"><a class="nav-link" href="cart.html">My Cart</a></li>
+        <li class="nav-item"><a class="nav-link" href="checkout.html">Orders</a></li>
+      </ul>
+      <button class="btn btn-link text-dark d-md-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"><i class="bi bi-list fs-4"></i></button>
+    </div>
+  </div>
+</nav>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header"><h5 class="offcanvas-title serif">Menu</h5><button class="btn-close" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body">
+    <nav class="d-flex flex-column gap-1">
+      <a href="index.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">Home</a>
+      <a href="catalog.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">Our Products</a>
+      <a href="custom-cake.html" class="nav-link active px-3 py-2" data-bs-dismiss="offcanvas">Custom Cakes</a>
+      <a href="cart.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">My Cart</a>
+      <a href="checkout.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">Orders</a>
+    </nav>
+  </div>
+</div>
+
+<!-- Hero header -->
+<section class="hero-section" style="min-height:280px">
+  <img src="images/custom-cake.jpg" class="hero-img" alt="Custom cake" />
+  <div class="hero-overlay"></div>
+  <div class="container-xl hero-content py-5 text-white">
+    <h1 class="serif display-5 fw-bold mb-2">Design Your Dream Cake</h1>
+    <p class="text-white-50" style="max-width:480px">
+      Choose your size, flavor, and theme. Add a personal message and inspiration photos. We'll bring your vision to life.
+    </p>
+  </div>
+</section>
+
+<!-- Success state (hidden initially) -->
+<div id="successState" class="d-none py-5">
+  <div class="container-xl d-flex justify-content-center">
+    <div class="card sc-card text-center" style="max-width:480px;width:100%">
+      <div class="card-body p-5">
+        <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-4" style="width:64px;height:64px">
+          <i class="bi bi-check-lg text-success fs-2"></i>
+        </div>
+        <h2 class="serif h4 fw-bold">Order Submitted!</h2>
+        <p class="text-muted mt-2 mb-4">Your custom cake request has been received. We'll contact you within 24 hours to confirm details and provide a final quote.</p>
+        <div id="successSummary" class="rounded p-3 text-start small mb-4" style="background:#f5f0eb"></div>
+        <button class="btn btn-primary" onclick="resetForm()">Design Another Cake</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Builder Form -->
+<div id="builderSection">
+<section class="py-4">
+  <div class="container-xl">
+    <form id="cakeForm" onsubmit="submitCake(event)">
+      <div class="row g-4">
+        <!-- Left column -->
+        <div class="col-lg-8">
+
+          <!-- Size -->
+          <div class="card sc-card mb-4">
+            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+              <i class="bi bi-rulers text-primary"></i>
+              <div>
+                <h3 class="serif h5 fw-semibold mb-0">Select Size *</h3>
+                <p class="text-muted small mb-0">Choose the size based on your guest count</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row g-2" id="sizeOptions"></div>
+            </div>
+          </div>
+
+          <!-- Flavor -->
+          <div class="card sc-card mb-4">
+            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+              <i class="bi bi-droplet-half text-primary"></i>
+              <div>
+                <h3 class="serif h5 fw-semibold mb-0">Select Flavor *</h3>
+                <p class="text-muted small mb-0">Pick from our premium cake flavors</p>
+              </div>
+            </div>
+            <div class="card-body d-flex flex-wrap gap-2" id="flavorOptions"></div>
+          </div>
+
+          <!-- Theme -->
+          <div class="card sc-card mb-4">
+            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+              <i class="bi bi-palette text-primary"></i>
+              <div>
+                <h3 class="serif h5 fw-semibold mb-0">Select Theme *</h3>
+                <p class="text-muted small mb-0">What's the occasion?</p>
+              </div>
+            </div>
+            <div class="card-body d-flex flex-wrap gap-2" id="themeOptions"></div>
+          </div>
+
+          <!-- Personalization -->
+          <div class="card sc-card mb-4">
+            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+              <i class="bi bi-chat-text text-primary"></i>
+              <div>
+                <h3 class="serif h5 fw-semibold mb-0">Personalization</h3>
+                <p class="text-muted small mb-0">Add your personal touch</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="form-label">Cake Message</label>
+                <input class="form-control" id="cakeMessage" placeholder='"Happy Birthday, Sarah!"' maxlength="50" oninput="updateCharCount()" />
+                <small class="text-muted" id="charCount">0/50 characters</small>
+              </div>
+              <div>
+                <label class="form-label">Special Instructions</label>
+                <textarea class="form-control" id="specialNotes" rows="3" placeholder="Allergies, color preferences, design notes…"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image Upload -->
+          <div class="card sc-card">
+            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+              <i class="bi bi-upload text-primary"></i>
+              <div>
+                <h3 class="serif h5 fw-semibold mb-0">Inspiration Image</h3>
+                <p class="text-muted small mb-0">Upload a reference image for your cake design (optional)</p>
+              </div>
+            </div>
+            <div class="card-body">
+              <input type="file" id="imageFile" accept="image/*" class="d-none" onchange="handleImageUpload(event)" />
+              <div id="uploadArea" class="upload-box p-4 text-center" onclick="document.getElementById('imageFile').click()">
+                <i class="bi bi-upload fs-2 text-muted mb-2 d-block"></i>
+                <p class="fw-medium mb-1">Click to upload</p>
+                <small class="text-muted">PNG, JPG up to 5MB</small>
+              </div>
+              <div id="imagePreviewWrap" class="d-none mt-2 position-relative d-inline-block">
+                <img id="imagePreview" src="" alt="Preview" style="width:200px;height:200px;object-fit:cover;border-radius:8px" />
+                <button type="button" onclick="removeImage()"
+                  class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 rounded-circle" style="transform:translate(50%,-50%);width:24px;height:24px;line-height:1;font-size:10px">
+                  <i class="bi bi-x"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Summary -->
+        <div class="col-lg-4">
+          <div class="card sc-card sticky-top" style="top:80px">
+            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+              <i class="bi bi-cake2 text-primary"></i>
+              <h3 class="serif h5 fw-semibold mb-0">Order Summary</h3>
+            </div>
+            <div class="card-body d-flex flex-column gap-3">
+              <div class="d-flex flex-column gap-2 small">
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Size</span><span class="fw-medium" id="summSize">Not selected</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Flavor</span><span class="fw-medium" id="summFlavor">Not selected</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Theme</span><span class="fw-medium" id="summTheme">Not selected</span>
+                </div>
+                <div class="d-flex justify-content-between" id="summMsgRow" style="display:none!important">
+                  <span class="text-muted">Message</span><span class="fw-medium text-truncate ms-2" id="summMsg"></span>
+                </div>
+              </div>
+
+              <!-- Delivery date -->
+              <div>
+                <label class="form-label d-flex align-items-center gap-2 small">
+                  <i class="bi bi-calendar text-primary"></i> Delivery Date *
+                </label>
+                <input type="date" class="form-control" id="deliveryDate" required oninput="updateSummary()" />
+                <small class="text-muted">Minimum 3 days advance notice required</small>
+              </div>
+
+              <hr class="my-1" />
+              <div class="d-flex justify-content-between fw-semibold">
+                <span>Estimated Price</span>
+                <span class="fs-5 fw-bold" id="summPrice">–</span>
+              </div>
+              <p class="text-muted small">Final price may vary based on design complexity. We'll confirm before proceeding.</p>
+
+              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                Submit Order <i class="bi bi-arrow-right ms-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+</div>
+
+<!-- Footer -->
+<footer class="sc-footer py-4 mt-4">
+  <div class="container-xl text-center text-muted small">&copy; 2026 Sweet Crumbs Bakery. All rights reserved.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script>
+  let state = { size:'', flavor:'', theme:'', message:'', deliveryDate:'' };
+
+  // Set min date (3 days ahead)
+  document.getElementById('deliveryDate').min = new Date(Date.now() + 3*86400000).toISOString().split('T')[0];
+  document.getElementById('deliveryDate').addEventListener('input', e => { state.deliveryDate = e.target.value; updateSummary(); });
+
+  // Build size options
+  document.getElementById('sizeOptions').innerHTML = cakeSizes.map(s => `
+    <div class="col-sm-6">
+      <label class="d-flex align-items-center justify-content-between rounded border p-3 cursor-pointer size-opt"
+             id="size-label-${s.value}" style="cursor:pointer;transition:.2s">
+        <div class="d-flex align-items-center gap-2">
+          <input type="radio" name="size" value="${s.value}" class="form-check-input mt-0" onchange="selectSize('${s.value}')" />
+          <span class="small fw-medium">${s.label}</span>
+        </div>
+        <span class="badge bg-light text-dark border">$${s.price}</span>
+      </label>
+    </div>`).join('');
+
+  // Build flavor pills
+  document.getElementById('flavorOptions').innerHTML = cakeFlavors.map(f => `
+    <button type="button" class="cat-pill" id="flavor-${f}" onclick="selectFlavor('${f}')">${f}</button>`).join('');
+
+  // Build theme pills
+  document.getElementById('themeOptions').innerHTML = cakeThemes.map(t => `
+    <button type="button" class="cat-pill" id="theme-${t.replace(/\s/g,'-')}" onclick="selectTheme('${t}')">${t}</button>`).join('');
+
+  function selectSize(val) {
+    state.size = val;
+    document.querySelectorAll('.size-opt').forEach(el => el.classList.remove('border-primary', 'bg-primary', 'bg-opacity-10'));
+    const lbl = document.getElementById(`size-label-${val}`);
+    if (lbl) { lbl.style.borderColor='var(--sc-primary)'; lbl.style.background='rgba(181,101,29,.05)'; }
+    updateSummary();
+  }
+  function selectFlavor(f) {
+    state.flavor = f;
+    document.querySelectorAll('#flavorOptions .cat-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById(`flavor-${f}`).classList.add('active');
+    updateSummary();
+  }
+  function selectTheme(t) {
+    state.theme = t;
+    document.querySelectorAll('#themeOptions .cat-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById(`theme-${t.replace(/\s/g,'-')}`).classList.add('active');
+    updateSummary();
+  }
+
+  function updateCharCount() {
+    const v = document.getElementById('cakeMessage').value;
+    state.message = v;
+    document.getElementById('charCount').textContent = `${v.length}/50 characters`;
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const size = cakeSizes.find(s => s.value === state.size);
+    document.getElementById('summSize').textContent   = size ? size.label : 'Not selected';
+    document.getElementById('summFlavor').textContent = state.flavor || 'Not selected';
+    document.getElementById('summTheme').textContent  = state.theme  || 'Not selected';
+    document.getElementById('summPrice').textContent  = size ? `$${size.price.toFixed(2)}` : '–';
+    const msgRow = document.getElementById('summMsgRow');
+    if (state.message) { msgRow.style.display='flex'; document.getElementById('summMsg').textContent = state.message; }
+    else msgRow.style.display = 'none';
+    // Enable submit
+    const del = document.getElementById('deliveryDate').value;
+    document.getElementById('submitBtn').disabled = !(state.size && state.flavor && state.theme && del);
+  }
+
+  function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('Image must be less than 5MB', 'error'); return; }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      document.getElementById('imagePreview').src = reader.result;
+      document.getElementById('uploadArea').classList.add('d-none');
+      document.getElementById('imagePreviewWrap').classList.remove('d-none');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    document.getElementById('imageFile').value = '';
+    document.getElementById('imagePreview').src = '';
+    document.getElementById('uploadArea').classList.remove('d-none');
+    document.getElementById('imagePreviewWrap').classList.add('d-none');
+  }
+
+  function submitCake(e) {
+    e.preventDefault();
+    const del = document.getElementById('deliveryDate').value;
+    if (!state.size || !state.flavor || !state.theme || !del) {
+      showToast('Please fill in all required fields', 'error'); return;
+    }
+    // TODO: Replace with API call to your Java backend
+    showToast('Custom cake order submitted!');
+    const size = cakeSizes.find(s => s.value === state.size);
+    document.getElementById('successSummary').innerHTML = `
+      <p class="mb-1"><strong>Size:</strong> ${size?.label}</p>
+      <p class="mb-1"><strong>Flavor:</strong> ${state.flavor}</p>
+      <p class="mb-1"><strong>Theme:</strong> ${state.theme}</p>
+      ${state.message ? `<p class="mb-1"><strong>Message:</strong> ${state.message}</p>` : ''}
+      <p class="mb-1"><strong>Delivery:</strong> ${del}</p>
+      <p class="mt-2 fw-semibold mb-0">Estimated Price: $${size?.price?.toFixed(2)}</p>`;
+    document.getElementById('builderSection').classList.add('d-none');
+    document.getElementById('successState').classList.remove('d-none');
+  }
+
+  function resetForm() {
+    state = { size:'', flavor:'', theme:'', message:'', deliveryDate:'' };
+    document.getElementById('cakeForm').reset();
+    document.getElementById('builderSection').classList.remove('d-none');
+    document.getElementById('successState').classList.add('d-none');
+    document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.size-opt').forEach(el => { el.style.borderColor=''; el.style.background=''; });
+    removeImage();
+    updateSummary();
+  }
+</script>
+</body>
+</html>
