@@ -1,10 +1,14 @@
+package com.bakery.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "customers")
 @Data
 @NoArgsConstructor
-public class Customer {
+public class customers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,4 +19,3 @@ public class Customer {
     private String address;
     private String password;
 }
-
