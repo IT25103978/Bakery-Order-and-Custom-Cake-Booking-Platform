@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Orders & Checkout – Sweet Crumbs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link href="css/styles.css" rel="stylesheet" />
+</head>
+<body>
+<div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-md sticky-top sc-navbar">
+  <div class="container-xl">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <i class="bi bi-cake2 text-primary fs-4"></i> Sweet Crumbs
+    </a>
+    <div class="d-flex align-items-center gap-2 ms-auto">
+      <a href="cart.html" class="btn btn-link position-relative text-dark p-2">
+        <i class="bi bi-cart3 fs-5"></i>
+        <span class="badge bg-primary rounded-pill cart-badge">3</span>
+      </a>
+      <ul class="navbar-nav d-none d-md-flex flex-row me-2">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="catalog.html">Our Products</a></li>
+        <li class="nav-item"><a class="nav-link" href="custom-cake.html">Custom Cakes</a></li>
+        <li class="nav-item"><a class="nav-link" href="cart.html">My Cart</a></li>
+        <li class="nav-item"><a class="nav-link active" href="checkout.html">Orders</a></li>
+      </ul>
+      <button class="btn btn-link text-dark d-md-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"><i class="bi bi-list fs-4"></i></button>
+    </div>
+  </div>
+</nav>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu">
+  <div class="offcanvas-header"><h5 class="offcanvas-title serif">Menu</h5><button class="btn-close" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body">
+    <nav class="d-flex flex-column gap-1">
+      <a href="index.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">Home</a>
+      <a href="catalog.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">Our Products</a>
+      <a href="custom-cake.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">Custom Cakes</a>
+      <a href="cart.html" class="nav-link px-3 py-2" data-bs-dismiss="offcanvas">My Cart</a>
+      <a href="checkout.html" class="nav-link active px-3 py-2" data-bs-dismiss="offcanvas">Orders</a>
+    </nav>
+  </div>
+</div>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="container-xl">
+    <h1 class="serif h2 fw-bold mb-1">Orders & Checkout</h1>
+    <p class="text-muted mb-0">Complete your order or track existing ones</p>
+  </div>
+</div>
+
+<section class="py-4">
+  <div class="container-xl">
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-4" id="checkoutTabs">
+      <li class="nav-item">
+        <button class="nav-link active d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#checkoutPane">
+          <i class="bi bi-credit-card"></i> New Checkout
+        </button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link d-flex align-items-center gap-2" data-bs-toggle="tab" data-bs-target="#ordersPane">
+          <i class="bi bi-box-seam"></i> My Orders (<span id="ordersCount"></span>)
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- ── Checkout Form ── -->
+      <div class="tab-pane fade show active" id="checkoutPane">
+        <!-- Success state -->
+        <div id="orderSuccess" class="d-none text-center py-5">
+          <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-4"
+               style="width:80px;height:80px">
+            <i class="bi bi-check-lg text-success fs-1"></i>
+          </div>
+          <h2 class="serif h3 fw-bold">Order Confirmed!</h2>
+          <p class="text-muted mx-auto mt-2 mb-4" style="max-width:440px">
+            Your order #1006 has been placed successfully. You will receive a confirmation email shortly with tracking details.
+          </p>
+          <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <button class="btn btn-outline-secondary" onclick="resetCheckout()">Place Another Order</button>
+            <button class="btn btn-primary" onclick="document.querySelector('[data-bs-target=\'#ordersPane\']').click()">
+              <i class="bi bi-bag me-2"></i>View My Orders
+            </button>
+          </div>
+        </div>
+
+        <!-- Form -->
+        <div id="checkoutForm">
+          <form id="checkoutFormEl" onsubmit="placeOrder(event)">
+            <div class="row g-4">
+              <!-- Left -->
+              <div class="col-lg-8">
+                <!-- Delivery -->
+                <div class="card sc-card mb-4">
+                  <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                    <i class="bi bi-geo-alt text-primary"></i>
+                    <h3 class="serif h5 fw-semibold mb-0">Delivery Information</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-sm-6">
+                        <label class="form-label">Full Name *</label>
+                        <input class="form-control" value="John Doe" required />
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-control" value="john@example.com" required />
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="form-label">Phone *</label>
+                        <input type="tel" class="form-control" value="+1 (555) 123-4567" required />
+                      </div>
+                      <div class="col-sm-6">
+                        <label class="form-label">Preferred Delivery Date *</label>
+                        <input type="date" class="form-control" id="deliveryDate" required />
+                      </div>
+                      <div class="col-12">
+                        <label class="form-label">Delivery Address *</label>
+                        <input class="form-control" placeholder="Street address" required />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="form-label">City *</label>
+                        <input class="form-control" placeholder="City" required />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="form-label">State *</label>
+                        <input class="form-control" placeholder="State" required />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="form-label">ZIP Code *</label>
+                        <input class="form-control" placeholder="12345" required />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Payment -->
+                <div class="card sc-card">
+                  <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                    <i class="bi bi-credit-card text-primary"></i>
+                    <div>
+                      <h3 class="serif h5 fw-semibold mb-0">Payment Method</h3>
+                      <p class="text-muted small mb-0">Your payment info will be processed securely</p>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <label class="form-label">Card Number *</label>
+                        <input class="form-control" placeholder="1234 5678 9012 3456" required />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="form-label">Expiry *</label>
+                        <input class="form-control" placeholder="MM/YY" required />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="form-label">CVV *</label>
+                        <input class="form-control" placeholder="123" required />
+                      </div>
+                      <div class="col-sm-4">
+                        <label class="form-label">Name on Card *</label>
+                        <input class="form-control" placeholder="John Doe" required />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Summary -->
+              <div class="col-lg-4">
+                <div class="card sc-card sticky-top" style="top:80px">
+                  <div class="card-header bg-white border-bottom">
+                    <h3 class="serif h5 fw-semibold mb-0">Order Summary</h3>
+                  </div>
+                  <div class="card-body d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between small">
+                      <span class="text-muted">Classic Chocolate Cake</span><span class="fw-medium">$45.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                      <span class="text-muted">Butter Croissant <span class="text-muted">x4</span></span><span class="fw-medium">$18.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                      <span class="text-muted">Artisan Cookie Box <span class="text-muted">x2</span></span><span class="fw-medium">$44.00</span>
+                    </div>
+                    <hr class="my-1" />
+                    <div class="d-flex justify-content-between small">
+                      <span class="text-muted">Subtotal</span><span>$107.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                      <span class="text-muted">Delivery</span><span class="text-success">Free</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                      <span class="text-muted">Tax (8%)</span><span>$8.56</span>
+                    </div>
+                    <hr class="my-1" />
+                    <div class="d-flex justify-content-between fw-semibold">
+                      <span>Total</span><span class="fs-5 fw-bold">$115.56</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">
+                      Place Order <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── Order History ── -->
+      <div class="tab-pane fade" id="ordersPane">
+        <div id="ordersList" class="d-flex flex-column gap-4"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="sc-footer py-4 mt-4">
+  <div class="container-xl text-center text-muted small">&copy; 2026 Sweet Crumbs Bakery. All rights reserved.</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/data.js"></script>
+<script>
+  // Set min date for delivery input
+  document.getElementById('deliveryDate').min = new Date().toISOString().split('T')[0];
+
+  // Order count badge
+  document.getElementById('ordersCount').textContent = sampleOrders.length;
+
+  function placeOrder(e) {
+    e.preventDefault();
+    showToast('Order placed successfully!');
+    document.getElementById('checkoutForm').classList.add('d-none');
+    document.getElementById('orderSuccess').classList.remove('d-none');
+  }
+
+  function resetCheckout() {
+    document.getElementById('checkoutForm').classList.remove('d-none');
+    document.getElementById('orderSuccess').classList.add('d-none');
+  }
+
+  const statusConf = {
+    pending:   { label:'Pending',   cls:'bg-warning text-dark' },
+    confirmed: { label:'Confirmed', cls:'bg-info text-white'   },
+    baking:    { label:'Baking',    cls:'bg-orange text-white' },
+    ready:     { label:'Ready',     cls:'bg-success text-white'},
+    delivered: { label:'Delivered', cls:'bg-success text-white'},
+    cancelled: { label:'Cancelled', cls:'bg-danger text-white' },
+  };
+
+  const steps = [
+    {key:'pending',   label:'Placed'},
+    {key:'confirmed', label:'Confirmed'},
+    {key:'baking',    label:'Baking'},
+    {key:'ready',     label:'Ready'},
+    {key:'delivered', label:'Delivered'},
+  ];
+
+  function timelineHtml(status) {
+    const idx = steps.findIndex(s => s.key === status);
+    return `<div class="d-flex align-items-center">${steps.map((step,i) => {
+      const done = i <= idx;
+      const cur  = i === idx;
+      const last = i === steps.length - 1;
+      return `
+        <div class="d-flex flex-column align-items-center" style="flex:1">
+          <div class="step-circle ${done?'done':'todo'} ${cur?'ring ring-primary':''}" style="${cur?'outline:2px solid rgba(181,101,29,.3);outline-offset:2px':''}">
+            ${done ? '<i class="bi bi-check" style="font-size:10px"></i>' : i+1}
+          </div>
+          <small class="${done?'fw-medium text-dark':'text-muted'}" style="font-size:10px;margin-top:4px">${step.label}</small>
+        </div>
+        ${!last ? `<div class="step-line ${i<idx?'done':'todo'}" style="margin-bottom:18px;flex:1;min-width:12px"></div>` : ''}`;
+    }).join('')}</div>`;
+  }
+
+  // Render orders
+  document.getElementById('ordersList').innerHTML = sampleOrders.map(order => {
+    const conf = statusConf[order.status] || {label:order.status, cls:'bg-secondary text-white'};
+    return `
+    <div class="card sc-card">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="serif h6 fw-semibold mb-0">Order #${order.id}</h3>
+              <span class="badge ${conf.cls} rounded-pill">${conf.label}</span>
+            </div>
+            <p class="text-muted small mb-0">Placed on ${new Date(order.createdAt).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</p>
+          </div>
+          <span class="fs-5 fw-bold">$${order.total.toFixed(2)}</span>
+        </div>
+
+        <!-- Items -->
+        <div class="d-flex flex-column gap-2 mb-3">
+          ${order.items.map(item => `
+            <div class="d-flex justify-content-between rounded px-3 py-2 small" style="background:rgba(237,232,226,.5)">
+              <span>${item.product.name} <span class="text-muted">x${item.quantity}</span></span>
+              <span class="fw-medium">$${(item.product.price*item.quantity).toFixed(2)}</span>
+            </div>`).join('')}
+          ${order.customCakes.map(cake => `
+            <div class="d-flex justify-content-between rounded px-3 py-2 small" style="background:rgba(181,101,29,.05)">
+              <span>Custom Cake – ${cake.size} ${cake.flavor} (${cake.theme})</span>
+              <span class="fw-medium">$${cake.price.toFixed(2)}</span>
+            </div>`).join('')}
+        </div>
+
+        <!-- Address -->
+        <p class="text-muted small mb-3"><i class="bi bi-geo-alt me-1"></i>${order.deliveryAddress}</p>
+
+        <!-- Timeline -->
+        ${timelineHtml(order.status)}
+      </div>
+    </div>`;
+  }).join('');
+</script>
+</body>
+</html>
