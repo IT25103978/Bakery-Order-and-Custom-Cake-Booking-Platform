@@ -1,4 +1,4 @@
-package com.bakery.model;
+package bakery.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
