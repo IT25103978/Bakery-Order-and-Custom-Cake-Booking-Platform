@@ -2,17 +2,20 @@ package com.bakery.service;
 
 import com.bakery.model.Product;
 import com.bakery.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService {
 
     private final ProductRepository repository;
+
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
+    }
 
     // ── GET ALL ───────────────────────────────────
     public List<Product> getAllProducts() {
