@@ -1,4 +1,4 @@
-package bakery.model;
+package com.bakery.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "products")
 @Data
 @NoArgsConstructor
-public class product {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,3 +21,4 @@ public class product {
     private Integer stockQuantity;
     private Boolean available;
     private String status;
+}
