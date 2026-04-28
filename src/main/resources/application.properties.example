@@ -1,0 +1,11 @@
+# rename this file to application.properties before running the app
+
+
+spring.application.name=demo
+spring.datasource.url=jdbc:mysql://localhost:3306/bakery_db  # create a DB as bakery_db in your mySQL workbench
+spring.datasource.username=YOUR USERNAME
+spring.datasource.password=YOUR DB PASSWORD
+
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
