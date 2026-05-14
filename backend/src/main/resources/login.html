@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bakery Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-image: url('/images/Cappuccino.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background-image: url('/images/Cappuccino.jpg');
+            background-size: cover;
+            background-position: center;
+            background: linear-gradient(135deg, #cdc9c5, #5e3817);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 380px;
+            text-align: center;
+        }
+        .card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        h2 { color: #8b5a2b; margin-bottom: 5px; }
+        p { color: #ffffff; margin-bottom: 25px; font-size: 14px; }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        input:focus { border-color: #8b5a2b; }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #8b5a2b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #6b3f1b; }
+        .error { color: red; margin-bottom: 15px; font-size: 13px; }
+        .success { color: green; margin-bottom: 15px; font-size: 13px; }
+        .link { margin-top: 15px; font-size: 13px; color: #999; }
+        .link a { color: #8b5a2b; text-decoration: none; font-weight: bold; }
+        .link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <img src="/images/bakery.png" alt="Bakery Logo"/>
+    <h2>Welcome Back!</h2>
+    <p>Login to your bakery account</p>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+
+    <form method="post" action="/login">
+        <input type="text" name="username" placeholder="Enter your username" required/>
+        <input type="password" name="password" placeholder="Enter your password" required/>
+        <button class="btn" type="submit">Login</button>
+    </form>
+    <div class="link">
+        Don't have an account? <a href="/register">Sign Up</a>
+    </div>
+</div>
+</body>
+</html>
