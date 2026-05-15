@@ -12,5 +12,7 @@ public interface ProductRepository
     List<Product> findByCategory(String category);
     List<Product> findByAvailable(Boolean available);
     List<Product> findByNameContainingIgnoreCase(String keyword);
-    List<Product> findByCategoryAndAvailable(String category, Boolean available);
+    List<Product> findByCategoryAndAvailable(
+            String category, Boolean available
+    );
 }
