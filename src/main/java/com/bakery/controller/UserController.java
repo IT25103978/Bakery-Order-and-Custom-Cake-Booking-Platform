@@ -1,6 +1,8 @@
 package com.bakery.controller;
 
 import jakarta.servlet.http.HttpSession;
+import com.bakery.model.User;
+import com.bakery.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,9 +32,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;    // ← only used for admin list
 
-    // ════════════════════════════════════════════════════════════
+    
     //  LOGIN
-    // ════════════════════════════════════════════════════════════
+   
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -69,9 +71,9 @@ public class UserController {
         }
     }
 
-    // ════════════════════════════════════════════════════════════
+   
     //  REGISTER
-    // ════════════════════════════════════════════════════════════
+    
 
     @GetMapping("/register")
     public String showRegisterPage() {
@@ -104,9 +106,7 @@ public class UserController {
         return "login";
     }
 
-    // ════════════════════════════════════════════════════════════
     //  DASHBOARD (customer profile)
-    // ════════════════════════════════════════════════════════════
 
     @GetMapping("/dashboard")
     public String showDashboard(HttpSession session, Model model) {
@@ -119,9 +119,7 @@ public class UserController {
         return "dashboard";
     }
 
-    // ════════════════════════════════════════════════════════════
     //  UPDATE profile
-    // ════════════════════════════════════════════════════════════
 
     @PostMapping("/update")
     public String handleUpdate(
@@ -161,9 +159,9 @@ public class UserController {
         return "dashboard";
     }
 
-    // ════════════════════════════════════════════════════════════
+
     //  DELETE account
-    // ════════════════════════════════════════════════════════════
+
 
     @PostMapping("/delete")
     public String handleDelete(HttpSession session) {
@@ -176,9 +174,9 @@ public class UserController {
         return "redirect:/login?deleted=true";
     }
 
-    // ════════════════════════════════════════════════════════════
+
     //  LOGOUT
-    // ════════════════════════════════════════════════════════════
+
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
@@ -186,9 +184,9 @@ public class UserController {
         return "redirect:/login";
     }
 
-    // ════════════════════════════════════════════════════════════
+
     //  ADMIN DASHBOARD
-    // ════════════════════════════════════════════════════════════
+
 
     @GetMapping("/admin/dashboard")
     public String adminDashboard(HttpSession session, Model model) {
@@ -210,9 +208,8 @@ public class UserController {
         return "redirect:/admin/dashboard?deleted=true";
     }
 
-    // ════════════════════════════════════════════════════════════
     //  PRODUCTS PAGE (customer landing after login)
-    // ════════════════════════════════════════════════════════════
+
 
     @GetMapping("/products")
     public String productsPage(HttpSession session, Model model) {
