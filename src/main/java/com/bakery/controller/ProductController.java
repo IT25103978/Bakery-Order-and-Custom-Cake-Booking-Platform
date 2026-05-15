@@ -2,18 +2,20 @@ package com.bakery.controller;
 
 import com.bakery.model.Product;
 import com.bakery.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class ProductController {
 
     private final ProductService service;
+
+    public ProductController(ProductService service) {
+        this.service = service;
+    }
 
     // GET all products
     // URL: GET http://localhost:8080/api/products
