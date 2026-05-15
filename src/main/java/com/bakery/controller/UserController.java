@@ -113,7 +113,7 @@ public class UserController {
         if (session.getAttribute("loggedInUser") == null) {
             return "redirect:/login";
         }
-        int id = (int) session.getAttribute("userId");
+        Long id = (Long) session.getAttribute("userId");
         User user = userRepository.findById(id).orElse(null);
         model.addAttribute("user", user);
         return "dashboard";
@@ -137,7 +137,7 @@ public class UserController {
             return "redirect:/login";
         }
 
-        int id = (int) session.getAttribute("userId");
+        Long id = (Long) session.getAttribute("userId");
 
         // Ask the SERVICE to update
         String error = userService.updateUser(
@@ -170,7 +170,7 @@ public class UserController {
         if (session.getAttribute("loggedInUser") == null) {
             return "redirect:/login";
         }
-        int id = (int) session.getAttribute("userId");
+        Long id = (Long) session.getAttribute("userId");
         userService.deleteUser(id);
         session.invalidate();
         return "redirect:/login?deleted=true";
@@ -202,7 +202,7 @@ public class UserController {
 
     // Admin: delete any user by id
     @PostMapping("/admin/delete-user")
-    public String adminDeleteUser(@RequestParam int id, HttpSession session) {
+    public String adminDeleteUser(@RequestParam Long id, HttpSession session) {
         if (!"ADMIN".equals(session.getAttribute("userRole"))) {
             return "redirect:/login";
         }

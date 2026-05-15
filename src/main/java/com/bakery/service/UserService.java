@@ -117,7 +117,7 @@ public class UserService {
      * Returns null          → update successful
      * Returns error message → user not found
      */
-    public String updateUser(int userId, String email, String password,
+    public String updateUser(Long userId, String email, String password,
                              String telephone, String firstName, String lastName) {
 
         User user = userRepository.findById(userId).orElse(null);
@@ -140,7 +140,7 @@ public class UserService {
     //  DELETE — remove a user by id
     // ════════════════════════════════════════════════════════════
 
-    public boolean deleteUser(int userId) {
+    public boolean deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             return false;
         }
