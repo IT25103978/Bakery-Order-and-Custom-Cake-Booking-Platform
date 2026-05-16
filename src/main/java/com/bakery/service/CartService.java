@@ -73,4 +73,23 @@ public class CartService {
             cartRepository.save(cart);
         });
     }
+
+    // Update the exact quantity or remove the item if quantity drops to 0
+    @Transactional
+    public Cart updateItemQuantity(Long userId, Long productId, int newQuantity) {
+        Cart cart = getOrCreateCart(userId);
+
+        if (newQuantity <= 0) {
+            // If quantity is 0 or less, remove the item completely
+            cart.getCartItems().removeIf(item -> item.getProduct().getId().equals(productId));
+        } else {
+            // Otherwise, find it and set the exact absolute value
+            cart.getCartItems().stream()
+                    .filter(item -> item.getProduct().getId().equals(productId))
+                    .findFirst()
+                    .ifPresent(item -> item.setQuantity(newQuantity));
+        }
+
+        return cartRepository.save(cart);
+    }
 }

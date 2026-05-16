@@ -5,6 +5,7 @@
 // ===================================================
 package com.bakery.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class Cart {
     // ── Child items (cascade delete on cart removal) ─
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @JsonManagedReference
     private List<CartItem> cartItems = new ArrayList<>();
 
     @Column(name = "created_at", updatable = false)
