@@ -1,222 +1,296 @@
 package com.bakery.controller;
 
-import jakarta.servlet.http.HttpSession;
 import com.bakery.model.User;
 import com.bakery.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import com.bakery.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.bakery.service.UserService;
-import com.bakery.repository.UserRepository;
-import com.bakery.model.User;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-// ─────────────────────────────────────────────────────────────────
-//  OOP Concept → ABSTRACTION (via Service layer)
-//  The controller no longer talks to the database directly.
-//  It only calls UserService methods and handles HTTP responses.
-//
-//  Before:  Controller → Repository → Database
-//  After:   Controller → Service → Repository → Database
-//
-//  This is cleaner and matches real-world Spring Boot architecture.
-// ─────────────────────────────────────────────────────────────────
-
-@Controller
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class UserController {
 
-    @Autowired
-    private UserService userService;          // ← service, NOT repository
+    private final UserService userService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;    // ← only used for admin list
-
-    
-    //  LOGIN
-   
-
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String handleLogin(@RequestParam String username,
-                              @RequestParam String password,
-                              HttpSession session,
-                              Model model) {
-
-        // Ask the SERVICE to check credentials and return the role
-        String result = userService.login(username, password);
-
-        if (UserService.RESULT_INVALID.equals(result)) {
-            model.addAttribute("error", "Invalid username or password!");
-            return "login";
-        }
-
-        // Valid login — get full user object and store in session
-        User user = userService.getUserByUsername(username);
-        session.setAttribute("loggedInUser", user.getUsername());
-        session.setAttribute("userRole",     user.getRole());
-        session.setAttribute("userId",       user.getId());
-        session.setAttribute("fullName",
-                user.getFirstName() + " " + user.getLastName());
-
-        // ── Role-based redirect ──────────────────────────────────
-        if (UserService.RESULT_ADMIN.equals(result)) {
-            return "redirect:/admin/dashboard";   // → admin page
-        } else {
-            return "redirect:/products";           // → customer page
-        }
-    }
-
-   
-    //  REGISTER
-    
-
-    @GetMapping("/register")
-    public String showRegisterPage() {
-        return "register";
-    }
+    // REGISTER USER (With Automatic Login)
+    // POST: /api/users/register
 
     @PostMapping("/register")
-    public String handleRegister(
-            @RequestParam String username,
-            @RequestParam String password,
-            @RequestParam String email,
-            @RequestParam(defaultValue = "") String telephone,
-            @RequestParam(defaultValue = "") String firstName,
-            @RequestParam(defaultValue = "") String lastName,
-            Model model) {
+    public ResponseEntity<?> registerUser(
+            @RequestBody User user,
+            HttpSession session
+    ) {
 
-        // Ask the SERVICE to validate and save the new user
+        // 1. Attempt to register the user in the database
         String error = userService.register(
-                username, password, email, telephone, firstName, lastName
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getTelephone(),
+                user.getFirstName(),
+                user.getLastName()
         );
 
         if (error != null) {
-            // Service returned an error message — show it on the form
-            model.addAttribute("error", error);
-            return "register";
+            return ResponseEntity
+                    .badRequest()
+                    .body(error);
         }
 
-        // Registration successful
-        model.addAttribute("success", "Registration successful! Please login.");
-        return "login";
+        // 2. Fetch the newly registered user to get database-generated fields (like ID and Role)
+        User registeredUser = userService.getUserByUsername(user.getUsername());
+
+        // 3. Create the session (Log them in automatically)
+        session.setAttribute("loggedInUser", registeredUser.getUsername());
+        session.setAttribute("userRole", registeredUser.getRole());
+        session.setAttribute("userId", registeredUser.getId());
+        session.setAttribute(
+                "fullName",
+                registeredUser.getFirstName() + " " + registeredUser.getLastName()
+        );
+
+        // 4. Return success response with user details so the frontend can use them immediately
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Registration and login successful");
+        response.put("role", registeredUser.getRole());
+        response.put("userId", registeredUser.getId());
+        response.put("username", registeredUser.getUsername());
+        response.put("fullName",
+                registeredUser.getFirstName() + " " + registeredUser.getLastName());
+
+        return ResponseEntity.ok(response);
     }
 
-    //  DASHBOARD (customer profile)
+
+    // =====================================================
+    // LOGIN USER
+    // POST: /api/users/login
+    // =====================================================
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(
+            @RequestBody User user,
+            HttpSession session
+    ) {
+
+        String result = userService.login(
+                user.getUsername(),
+                user.getPassword()
+        );
+
+        if (UserService.RESULT_INVALID.equals(result)) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid username or password");
+        }
+
+        User loggedUser = userService
+                .getUserByUsername(user.getUsername());
+
+        session.setAttribute("loggedInUser", loggedUser.getUsername());
+        session.setAttribute("userRole", loggedUser.getRole());
+        session.setAttribute("userId", loggedUser.getId());
+        session.setAttribute(
+                "fullName",
+                loggedUser.getFirstName() + " " + loggedUser.getLastName()
+        );
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("message", "Login successful");
+        response.put("role", loggedUser.getRole());
+        response.put("userId", loggedUser.getId());
+        response.put("username", loggedUser.getUsername());
+        response.put("fullName",
+                loggedUser.getFirstName() + " " + loggedUser.getLastName());
+
+        return ResponseEntity.ok(response);
+    }
+
+    // GET USER DASHBOARD / PROFILE
+    // GET: /api/users/dashboard
 
     @GetMapping("/dashboard")
-    public String showDashboard(HttpSession session, Model model) {
+    public ResponseEntity<?> getDashboard(HttpSession session) {
+
         if (session.getAttribute("loggedInUser") == null) {
-            return "redirect:/login";
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("User not logged in");
         }
+
         Long id = (Long) session.getAttribute("userId");
-        User user = userRepository.findById(id).orElse(null);
-        model.addAttribute("user", user);
-        return "dashboard";
+
+        User user = userRepository
+                .findById(id)
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body("User not found");
+        }
+
+        return ResponseEntity.ok(user);
     }
 
-    //  UPDATE profile
+    // UPDATE USER PROFILE
+    // PUT: /api/users/update
 
-    @PostMapping("/update")
-    public String handleUpdate(
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam(defaultValue = "") String telephone,
-            @RequestParam(defaultValue = "") String firstName,
-            @RequestParam(defaultValue = "") String lastName,
-            HttpSession session,
-            Model model) {
+    @PutMapping("/update")
+    public ResponseEntity<?> updateUser(
+            @RequestBody User updatedUser,
+            HttpSession session
+    ) {
 
         if (session.getAttribute("loggedInUser") == null) {
-            return "redirect:/login";
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("User not logged in");
         }
 
         Long id = (Long) session.getAttribute("userId");
 
-        // Ask the SERVICE to update
         String error = userService.updateUser(
-                id, email, password, telephone, firstName, lastName
+                id,
+                updatedUser.getEmail(),
+                updatedUser.getPassword(),
+                updatedUser.getTelephone(),
+                updatedUser.getFirstName(),
+                updatedUser.getLastName()
         );
 
-        // Refresh user object to show updated values
-        User user = userRepository.findById(id).orElse(null);
-        model.addAttribute("user", user);
-
         if (error != null) {
-            model.addAttribute("error", error);
-        } else {
-            // Update full name in session too
-            if (user != null) {
-                session.setAttribute("fullName",
-                        user.getFirstName() + " " + user.getLastName());
-            }
-            model.addAttribute("success", "Profile updated successfully!");
+            return ResponseEntity
+                    .badRequest()
+                    .body(error);
         }
-        return "dashboard";
+
+        User user = userRepository
+                .findById(id)
+                .orElse(null);
+
+        if (user != null) {
+            session.setAttribute(
+                    "fullName",
+                    user.getFirstName() + " " + user.getLastName()
+            );
+        }
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Profile updated successfully");
+
+        return ResponseEntity.ok(response);
     }
 
 
-    //  DELETE account
+    // DELETE OWN ACCOUNT
+    // DELETE: /api/users/delete
 
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteUser(HttpSession session) {
 
-    @PostMapping("/delete")
-    public String handleDelete(HttpSession session) {
         if (session.getAttribute("loggedInUser") == null) {
-            return "redirect:/login";
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("User not logged in");
         }
+
         Long id = (Long) session.getAttribute("userId");
+
         userService.deleteUser(id);
+
         session.invalidate();
-        return "redirect:/login?deleted=true";
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User deleted successfully");
+
+        return ResponseEntity.ok(response);
     }
 
 
-    //  LOGOUT
+    // LOGOUT
+    // POST: /api/users/logout
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/login";
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Logged out successfully");
+
+        return ResponseEntity.ok(response);
     }
 
 
-    //  ADMIN DASHBOARD
-
+    // ADMIN DASHBOARD
+    // GET: /api/users/admin/dashboard
 
     @GetMapping("/admin/dashboard")
-    public String adminDashboard(HttpSession session, Model model) {
+    public ResponseEntity<?> adminDashboard(HttpSession session) {
+
         if (!"ADMIN".equals(session.getAttribute("userRole"))) {
-            return "redirect:/login";   // block non-admins
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Access denied");
         }
-        model.addAttribute("users",    userRepository.findAll());
-        model.addAttribute("fullName", session.getAttribute("fullName"));
-        return "admin-dashboard";
+
+        List<User> users = userRepository.findAll();
+
+        return ResponseEntity.ok(users);
     }
 
-    // Admin: delete any user by id
-    @PostMapping("/admin/delete-user")
-    public String adminDeleteUser(@RequestParam Long id, HttpSession session) {
+    // ADMIN DELETE USER
+    // DELETE: /api/users/admin/delete-user/{id}
+
+    @DeleteMapping("/admin/delete-user/{id}")
+    public ResponseEntity<?> adminDeleteUser(
+            @PathVariable Long id,
+            HttpSession session
+    ) {
+
         if (!"ADMIN".equals(session.getAttribute("userRole"))) {
-            return "redirect:/login";
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Access denied");
         }
+
         userService.deleteUser(id);
-        return "redirect:/admin/dashboard?deleted=true";
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User deleted successfully");
+
+        return ResponseEntity.ok(response);
     }
 
-    //  PRODUCTS PAGE (customer landing after login)
+    // GET ALL USERS
+    // GET: /api/users/all
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllUsers(HttpSession session) {
 
-    @GetMapping("/products")
-    public String productsPage(HttpSession session, Model model) {
-        if (session.getAttribute("loggedInUser") == null) {
-            return "redirect:/login";
+        if (!"ADMIN".equals(session.getAttribute("userRole"))) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Access denied");
         }
-        model.addAttribute("fullName", session.getAttribute("fullName"));
-        return "products";
+
+        List<User> users = userRepository.findAll();
+
+        return ResponseEntity.ok(users);
     }
 }
