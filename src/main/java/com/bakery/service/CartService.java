@@ -1,114 +1,76 @@
-// ===================================================
-// CartService.java  — com.bakery.service
-// All business logic for cart operations.
-// ===================================================
 package com.bakery.service;
 
-import com.bakery.model.*;
-import com.bakery.repository.*;
+import com.bakery.model.Cart;
+import com.bakery.model.CartItem;
+import com.bakery.model.Product;
+import com.bakery.model.User;
+import com.bakery.repository.CartItemRepository;
+import com.bakery.repository.CartRepository;
+import com.bakery.repository.ProductRepository;
+import com.bakery.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor          // Lombok injects all final fields via constructor
-@Transactional
+@RequiredArgsConstructor
 public class CartService {
 
-    private final CartRepository        cartRepository;
-    private final CartItemRepository    cartItemRepository;
-    private final ProductRepository     productRepository;
-    private final UserRepository        userRepository;
+    private final CartRepository cartRepository;
+    private final UserRepository userRepository;
+    private final ProductRepository productRepository;
 
-    // ─────────────────────────────────────────────────
-    //  GET or CREATE a cart for the given user
-    // ─────────────────────────────────────────────────
+    // Fetch or create an active cart for a specific user ID
     public Cart getOrCreateCart(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Look for existing cart; if none exists, instantiate a new one
         return cartRepository.findByUserId(userId)
                 .orElseGet(() -> {
-                    User user = userRepository.findById(userId)
-                            .orElseThrow(() -> new RuntimeException("User not found: " + userId));
-                    Cart newCart = Cart.builder().user(user).build();
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
                     return cartRepository.save(newCart);
                 });
     }
 
-    // ─────────────────────────────────────────────────
-    //  ADD a product to the cart
-    //  • If the product is already in the cart → increment qty
-    //  • Otherwise               → create a new CartItem
-    // ─────────────────────────────────────────────────
-    public Cart addToCart(Long userId, Long productId, int quantity) {
-        if (quantity <= 0) throw new IllegalArgumentException("Quantity must be > 0");
-
+    // Add an item to the cart using User ID
+    @Transactional
+    public Cart addItemToCart(Long userId, Long productId, int quantity) {
         Cart cart = getOrCreateCart(userId);
-
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
-                .ifPresentOrElse(
-                        existing -> existing.setQuantity(existing.getQuantity() + quantity),
-                        () -> {
-                            CartItem newItem = CartItem.builder()
-                                    .cart(cart)
-                                    .product(product)
-                                    .quantity(quantity)
-                                    .build();
-                            cart.getCartItems().add(newItem);
-                            cartItemRepository.save(newItem);
-                        }
-                );
+        // Check if item is already present in the cart
+        Optional<CartItem> existingItem = cart.getCartItems().stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            // Update quantity increment
+            CartItem item = existingItem.get();
+            item.setQuantity(item.getQuantity() + quantity);
+        } else {
+            // Map a brand-new item row
+            CartItem newItem = CartItem.builder()
+                    .cart(cart)
+                    .product(product)
+                    .quantity(quantity)
+                    .build();
+            cart.getCartItems().add(newItem);
+        }
 
         return cartRepository.save(cart);
     }
 
-    // ─────────────────────────────────────────────────
-    //  UPDATE quantity for a specific CartItem
-    // ─────────────────────────────────────────────────
-    public void updateQuantity(Long cartItemId, int newQuantity) {
-        if (newQuantity <= 0) {
-            removeCartItem(cartItemId);
-            return;
-        }
-        CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("CartItem not found: " + cartItemId));
-        item.setQuantity(newQuantity);
-        cartItemRepository.save(item);
-    }
-
-    // ─────────────────────────────────────────────────
-    //  REMOVE a single line from the cart
-    // ─────────────────────────────────────────────────
-    public void removeCartItem(Long cartItemId) {
-        cartItemRepository.deleteById(cartItemId);
-    }
-
-    // ─────────────────────────────────────────────────
-    //  CLEAR the entire cart (all items)
-    // ─────────────────────────────────────────────────
+    // Clear the cart entirely (To be used after checkout finishes processing)
+    @Transactional
     public void clearCart(Long userId) {
-        Cart cart = getOrCreateCart(userId);
-        cartItemRepository.deleteAllByCartId(cart.getId());
-        cart.getCartItems().clear();
-        cartRepository.save(cart);
-    }
-
-    // ─────────────────────────────────────────────────
-    //  READ — fetch the full cart with items
-    // ─────────────────────────────────────────────────
-    @Transactional(readOnly = true)
-    public Cart getCart(Long userId) {
-        return getOrCreateCart(userId);
-    }
-
-    // ─────────────────────────────────────────────────
-    //  READ — list all CartItems for a user's cart
-    // ─────────────────────────────────────────────────
-    @Transactional(readOnly = true)
-    public List<CartItem> getCartItems(Long userId) {
-        return getOrCreateCart(userId).getCartItems();
+        cartRepository.findByUserId(userId).ifPresent(cart -> {
+            cart.getCartItems().clear(); // Triggers orphanRemoval = true to wipe DB records
+            cartRepository.save(cart);
+        });
     }
 }
