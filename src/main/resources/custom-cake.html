@@ -11,7 +11,6 @@
 <body>
 <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:1100"></div>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-md sticky-top sc-navbar">
   <div class="container-xl">
     <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
@@ -46,7 +45,6 @@
   </div>
 </div>
 
-<!-- Hero header -->
 <section class="hero-section" style="min-height:280px">
   <img src="images/custom-cake.jpg" class="hero-img" alt="Custom cake" />
   <div class="hero-overlay"></div>
@@ -58,7 +56,6 @@
   </div>
 </section>
 
-<!-- Success state (hidden initially) -->
 <div id="successState" class="d-none py-5">
   <div class="container-xl d-flex justify-content-center">
     <div class="card sc-card text-center" style="max-width:480px;width:100%">
@@ -75,154 +72,119 @@
   </div>
 </div>
 
-<!-- Builder Form -->
 <div id="builderSection">
-<section class="py-4">
-  <div class="container-xl">
-    <form id="cakeForm" onsubmit="submitCake(event)">
-      <div class="row g-4">
-        <!-- Left column -->
-        <div class="col-lg-8">
+  <section class="py-4">
+    <div class="container-xl">
+      <form id="cakeForm" onsubmit="submitCake(event)">
+        <div class="row g-4">
+          <div class="col-lg-8">
 
-          <!-- Size -->
-          <div class="card sc-card mb-4">
-            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
-              <i class="bi bi-rulers text-primary"></i>
-              <div>
-                <h3 class="serif h5 fw-semibold mb-0">Select Size *</h3>
-                <p class="text-muted small mb-0">Choose the size based on your guest count</p>
+            <div class="card sc-card mb-4">
+              <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                <i class="bi bi-rulers text-primary"></i>
+                <div>
+                  <h3 class="serif h5 fw-semibold mb-0">Select Size *</h3>
+                  <p class="text-muted small mb-0">Choose the size based on your guest count</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row g-2" id="sizeOptions"></div>
               </div>
             </div>
-            <div class="card-body">
-              <div class="row g-2" id="sizeOptions"></div>
-            </div>
-          </div>
 
-          <!-- Flavor -->
-          <div class="card sc-card mb-4">
-            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
-              <i class="bi bi-droplet-half text-primary"></i>
-              <div>
-                <h3 class="serif h5 fw-semibold mb-0">Select Flavor *</h3>
-                <p class="text-muted small mb-0">Pick from our premium cake flavors</p>
+            <div class="card sc-card mb-4">
+              <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                <i class="bi bi-droplet-half text-primary"></i>
+                <div>
+                  <h3 class="serif h5 fw-semibold mb-0">Select Flavor *</h3>
+                  <p class="text-muted small mb-0">Pick from our premium cake flavors</p>
+                </div>
               </div>
+              <div class="card-body d-flex flex-wrap gap-2" id="flavorOptions"></div>
             </div>
-            <div class="card-body d-flex flex-wrap gap-2" id="flavorOptions"></div>
-          </div>
 
-          <!-- Theme -->
-          <div class="card sc-card mb-4">
-            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
-              <i class="bi bi-palette text-primary"></i>
-              <div>
-                <h3 class="serif h5 fw-semibold mb-0">Select Theme *</h3>
-                <p class="text-muted small mb-0">What's the occasion?</p>
+            <div class="card sc-card mb-4">
+              <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                <i class="bi bi-palette text-primary"></i>
+                <div>
+                  <h3 class="serif h5 fw-semibold mb-0">Select Theme *</h3>
+                  <p class="text-muted small mb-0">What's the occasion?</p>
+                </div>
               </div>
+              <div class="card-body d-flex flex-wrap gap-2" id="themeOptions"></div>
             </div>
-            <div class="card-body d-flex flex-wrap gap-2" id="themeOptions"></div>
-          </div>
 
-          <!-- Personalization -->
-          <div class="card sc-card mb-4">
-            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
-              <i class="bi bi-chat-text text-primary"></i>
-              <div>
-                <h3 class="serif h5 fw-semibold mb-0">Personalization</h3>
-                <p class="text-muted small mb-0">Add your personal touch</p>
+            <div class="card sc-card">
+              <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                <i class="bi bi-chat-text text-primary"></i>
+                <div>
+                  <h3 class="serif h5 fw-semibold mb-0">Personalization</h3>
+                  <p class="text-muted small mb-0">Add your personal touch</p>
+                </div>
               </div>
-            </div>
-            <div class="card-body">
-              <div class="mb-3">
-                <label class="form-label">Cake Message</label>
-                <input class="form-control" id="cakeMessage" placeholder='"Happy Birthday, Sarah!"' maxlength="50" oninput="updateCharCount()" />
-                <small class="text-muted" id="charCount">0/50 characters</small>
-              </div>
-              <div>
-                <label class="form-label">Special Instructions</label>
-                <textarea class="form-control" id="specialNotes" rows="3" placeholder="Allergies, color preferences, design notes…"></textarea>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="form-label">Cake Message</label>
+                  <input class="form-control" id="cakeMessage" placeholder='"Happy Birthday, Sarah!"' maxlength="50" oninput="updateCharCount()" />
+                  <small class="text-muted" id="charCount">0/50 characters</small>
+                </div>
+                <div>
+                  <label class="form-label">Special Instructions</label>
+                  <textarea class="form-control" id="specialNotes" rows="3" placeholder="Allergies, color preferences, design notes…"></textarea>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Image Upload -->
-          <div class="card sc-card">
-            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
-              <i class="bi bi-upload text-primary"></i>
-              <div>
-                <h3 class="serif h5 fw-semibold mb-0">Inspiration Image</h3>
-                <p class="text-muted small mb-0">Upload a reference image for your cake design (optional)</p>
+          <div class="col-lg-4">
+            <div class="card sc-card sticky-top" style="top:80px">
+              <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
+                <i class="bi bi-cake2 text-primary"></i>
+                <h3 class="serif h5 fw-semibold mb-0">Order Summary</h3>
               </div>
-            </div>
-            <div class="card-body">
-              <input type="file" id="imageFile" accept="image/*" class="d-none" onchange="handleImageUpload(event)" />
-              <div id="uploadArea" class="upload-box p-4 text-center" onclick="document.getElementById('imageFile').click()">
-                <i class="bi bi-upload fs-2 text-muted mb-2 d-block"></i>
-                <p class="fw-medium mb-1">Click to upload</p>
-                <small class="text-muted">PNG, JPG up to 5MB</small>
-              </div>
-              <div id="imagePreviewWrap" class="d-none mt-2 position-relative d-inline-block">
-                <img id="imagePreview" src="" alt="Preview" style="width:200px;height:200px;object-fit:cover;border-radius:8px" />
-                <button type="button" onclick="removeImage()"
-                  class="btn btn-danger btn-sm position-absolute top-0 end-0 p-1 rounded-circle" style="transform:translate(50%,-50%);width:24px;height:24px;line-height:1;font-size:10px">
-                  <i class="bi bi-x"></i>
+              <div class="card-body d-flex flex-column gap-3">
+                <div class="d-flex flex-column gap-2 small">
+                  <div class="d-flex justify-content-between">
+                    <span class="text-muted">Size</span><span class="fw-medium" id="summSize">Not selected</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span class="text-muted">Flavor</span><span class="fw-medium" id="summFlavor">Not selected</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <span class="text-muted">Theme</span><span class="fw-medium" id="summTheme">Not selected</span>
+                  </div>
+                  <div class="d-flex justify-content-between" id="summMsgRow" style="display:none!important">
+                    <span class="text-muted">Message</span><span class="fw-medium text-truncate ms-2" id="summMsg"></span>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="form-label d-flex align-items-center gap-2 small">
+                    <i class="bi bi-calendar text-primary"></i> Delivery Date *
+                  </label>
+                  <input type="date" class="form-control" id="deliveryDate" required oninput="updateSummary()" />
+                  <small class="text-muted">Minimum 3 days advance notice required</small>
+                </div>
+
+                <hr class="my-1" />
+                <div class="d-flex justify-content-between fw-semibold">
+                  <span>Estimated Price</span>
+                  <span class="fs-5 fw-bold" id="summPrice">–</span>
+                </div>
+                <p class="text-muted small">Final price may vary based on design complexity. We'll confirm before proceeding.</p>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                  Submit Order <i class="bi bi-arrow-right ms-1"></i>
                 </button>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Right column: Summary -->
-        <div class="col-lg-4">
-          <div class="card sc-card sticky-top" style="top:80px">
-            <div class="card-header bg-white border-bottom d-flex align-items-center gap-2">
-              <i class="bi bi-cake2 text-primary"></i>
-              <h3 class="serif h5 fw-semibold mb-0">Order Summary</h3>
-            </div>
-            <div class="card-body d-flex flex-column gap-3">
-              <div class="d-flex flex-column gap-2 small">
-                <div class="d-flex justify-content-between">
-                  <span class="text-muted">Size</span><span class="fw-medium" id="summSize">Not selected</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="text-muted">Flavor</span><span class="fw-medium" id="summFlavor">Not selected</span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span class="text-muted">Theme</span><span class="fw-medium" id="summTheme">Not selected</span>
-                </div>
-                <div class="d-flex justify-content-between" id="summMsgRow" style="display:none!important">
-                  <span class="text-muted">Message</span><span class="fw-medium text-truncate ms-2" id="summMsg"></span>
-                </div>
-              </div>
-
-              <!-- Delivery date -->
-              <div>
-                <label class="form-label d-flex align-items-center gap-2 small">
-                  <i class="bi bi-calendar text-primary"></i> Delivery Date *
-                </label>
-                <input type="date" class="form-control" id="deliveryDate" required oninput="updateSummary()" />
-                <small class="text-muted">Minimum 3 days advance notice required</small>
-              </div>
-
-              <hr class="my-1" />
-              <div class="d-flex justify-content-between fw-semibold">
-                <span>Estimated Price</span>
-                <span class="fs-5 fw-bold" id="summPrice">–</span>
-              </div>
-              <p class="text-muted small">Final price may vary based on design complexity. We'll confirm before proceeding.</p>
-
-              <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
-                Submit Order <i class="bi bi-arrow-right ms-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</section>
+      </form>
+    </div>
+  </section>
 </div>
 
-<!-- Footer -->
 <footer class="sc-footer py-4 mt-4">
   <div class="container-xl text-center text-muted small">&copy; 2026 Sweet Crumbs Bakery. All rights reserved.</div>
 </footer>
@@ -345,7 +307,6 @@
     document.getElementById('successState').classList.add('d-none');
     document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.size-opt').forEach(el => { el.style.borderColor=''; el.style.background=''; });
-    removeImage();
     updateSummary();
   }
 </script>
