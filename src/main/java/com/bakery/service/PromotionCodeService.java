@@ -1,6 +1,6 @@
 package com.bakery.service;
 
-import com.bakery.entity.PromotionCode;
+import com.bakery.model.PromotionCode;
 import com.bakery.repository.PromotionCodeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

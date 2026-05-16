@@ -1,6 +1,6 @@
 package com.bakery.service;
 
-import com.bakery.entity.CustomCakeBooking;
+import com.bakery.model.CustomCakeBooking;
 import com.bakery.repository.CustomCakeBookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
