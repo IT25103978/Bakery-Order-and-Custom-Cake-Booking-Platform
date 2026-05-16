@@ -1,6 +1,6 @@
 package com.bakery.controller;
 
-import com.bakery.entity.PromotionCode;
+import com.bakery.model.PromotionCode;
 import com.bakery.service.PromotionCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

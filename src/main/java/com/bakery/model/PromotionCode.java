@@ -1,4 +1,4 @@
-package com.bakery.entity;
+package com.bakery.model;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,6 +1,6 @@
 package com.bakery.controller;
 
-import com.bakery.entity.CustomCakeBooking;
+import com.bakery.model.CustomCakeBooking;
 import com.bakery.service.CustomCakeBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
