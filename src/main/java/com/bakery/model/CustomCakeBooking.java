@@ -10,14 +10,20 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+
 public class CustomCakeBooking {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String customerName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
 
+    private User user;
+
+    private String customerName;
 
     private String cakeFlavor;
 
@@ -30,4 +36,6 @@ public class CustomCakeBooking {
     private double price;
 
     private String status;
+
+
 }
