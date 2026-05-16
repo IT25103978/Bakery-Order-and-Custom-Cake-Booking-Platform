@@ -5,6 +5,7 @@
 // ===================================================
 package com.bakery.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class CartItem {
     // ── FK → carts.id ──────────────────────────────
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
+    @JsonBackReference
     private Cart cart;
 
     // ── FK → products.id ───────────────────────────
