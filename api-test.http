@@ -1,0 +1,43 @@
+### Add Payment
+POST http://localhost:8080/api/payments
+Content-Type: application/json
+
+{
+  "id": "PAY001",
+  "cardHolderName": "Sungi",
+  "maskedCardNumber": "**** **** **** 1234",
+  "expiryDate": "12/26",
+  "originalAmount": 3000.0,
+  "promoCode": "CAKE10",
+  "discountAmount": 300.0,
+  "finalAmount": 2700.0,
+  "timestamp": "2026-05-15 13:50:00"
+}
+
+### Read All Payments
+GET http://localhost:8080/api/payments
+
+
+### Read One Payment
+GET http://localhost:8080/api/payments/PAY001
+
+
+### Update Payment
+PUT http://localhost:8080/api/payments/PAY001
+Content-Type: application/json
+
+{
+  "id": "PAY001",
+  "cardHolderName": "Updated Sungi",
+  "maskedCardNumber": "**** **** **** 9999",
+  "expiryDate": "11/28",
+  "originalAmount": 5000.0,
+  "promoCode": "CAKE10",
+  "discountAmount": 500.0,
+  "finalAmount": 4500.0,
+  "timestamp": "2026-05-15 15:00:00"
+}
+
+
+### Delete Payment / Delete Saved Card Details
+DELETE http://localhost:8080/api/payments/PAY001

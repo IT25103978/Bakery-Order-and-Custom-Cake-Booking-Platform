@@ -1,0 +1,4 @@
+BAKERY10|10.0|true
+SWEET20|20.0|true
+CAKE15|15.0|true
+EXPIRED5|5.0|false
