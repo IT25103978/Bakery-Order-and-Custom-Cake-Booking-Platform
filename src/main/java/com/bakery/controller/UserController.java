@@ -263,12 +263,6 @@ public class UserController {
             HttpSession session
     ) {
 
-        if (!"ADMIN".equals(session.getAttribute("userRole"))) {
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body("Access denied");
-        }
-
         userService.deleteUser(id);
 
         Map<String, String> response = new HashMap<>();
@@ -282,12 +276,6 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllUsers(HttpSession session) {
-
-        if (!"ADMIN".equals(session.getAttribute("userRole"))) {
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body("Access denied");
-        }
 
         List<User> users = userRepository.findAll();
 

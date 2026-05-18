@@ -25,6 +25,11 @@ public class CustomCakeBookingService {
         return repository.findAll();
     }
 
+    // Get bookings for a specific user
+    public List<CustomCakeBooking> getBookingsByUser(Long userId) {
+        return repository.findByUser_Id(userId);
+    }
+
     // Get booking by ID
     public Optional<CustomCakeBooking> getBookingById(Long id) {
         return repository.findById(id);

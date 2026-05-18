@@ -1,5 +1,6 @@
 package com.bakery.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,17 +11,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-
 public class CustomCakeBooking {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Excluded from JSON to prevent LazyInitializationException during serialization
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-
     private User user;
 
     private String customerName;
@@ -36,6 +36,4 @@ public class CustomCakeBooking {
     private double price;
 
     private String status;
-
-
 }

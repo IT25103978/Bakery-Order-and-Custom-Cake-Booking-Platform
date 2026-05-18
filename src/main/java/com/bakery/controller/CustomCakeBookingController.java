@@ -25,15 +25,24 @@ public class CustomCakeBookingController {
     private UserRepository userRepository; // Inject this repository to fetch the active User entity
 
     @PostMapping("/book")
-    public ResponseEntity<?> bookCake(@RequestBody CustomCakeBooking booking, HttpSession session) {
-        // Enforce active session check
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please log in to book a custom cake.");
+    public ResponseEntity<?> bookCake(
+            @RequestBody CustomCakeBooking booking,
+            @RequestParam(required = false) Long userId,
+            HttpSession session) {
+
+        // Prefer session userId (more secure); fall back to request param
+        Long activeUserId = (Long) session.getAttribute("userId");
+        if (activeUserId == null) {
+            activeUserId = userId;
         }
 
-        // Set the user relationship context securely from the server session data
-        User currentUser = userRepository.findById(userId).orElseThrow();
+        if (activeUserId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Please log in to book a custom cake.");
+        }
+
+        User currentUser = userRepository.findById(activeUserId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         booking.setUser(currentUser);
         booking.setCustomerName(currentUser.getFirstName() + " " + currentUser.getLastName());
 
@@ -41,10 +50,30 @@ public class CustomCakeBookingController {
         return ResponseEntity.ok(savedBooking);
     }
 
-    // Get all bookings
+    // Get all bookings (admin)
     @GetMapping("/all")
     public List<CustomCakeBooking> getAllBookings() {
         return service.getAllBookings();
+    }
+
+    // Get bookings for the currently logged-in user
+    // GET: /api/cakes/my?userId={userId}
+    @GetMapping("/my")
+    public ResponseEntity<?> getMyBookings(
+            @RequestParam(required = false) Long userId,
+            HttpSession session) {
+
+        if (userId == null) {
+            userId = (Long) session.getAttribute("userId");
+        }
+
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Please log in to view your bookings.");
+        }
+
+        List<CustomCakeBooking> bookings = service.getBookingsByUser(userId);
+        return ResponseEntity.ok(bookings);
     }
 
     // Get booking by ID

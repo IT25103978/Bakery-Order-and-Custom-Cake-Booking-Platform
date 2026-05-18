@@ -110,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
-            
+
             activeTable = item.getAttribute('data-table');
             document.getElementById('page-title').textContent = item.textContent.trim();
-            
+
             if(activeTable === 'dashboard') {
                 showDashboard();
             } else {
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('search-input').addEventListener('input', (e) => {
         const term = e.target.value.toLowerCase();
         const filtered = currentData.filter(row => {
-            return Object.values(row).some(val => 
+            return Object.values(row).some(val =>
                 val !== null && val.toString().toLowerCase().includes(term)
             );
         });
@@ -141,7 +141,7 @@ function showDashboard() {
     document.getElementById('dashboard-view').style.display = 'block';
     document.getElementById('table-view').style.display = 'none';
     document.getElementById('table-actions').style.display = 'none';
-    
+
     // Fetch stats for tables
     ['users', 'products', 'orders', 'customcakerequests', 'caketoppings'].forEach(table => {
         fetch(`${API_BASE}/${schema[table].endpoint}`)
@@ -159,7 +159,7 @@ async function showTable(tableKey) {
     document.getElementById('search-input').value = '';
 
     const tableSchema = schema[tableKey];
-    
+
     // Load reference data for dropdowns
     for (let field of tableSchema.fields) {
         if (field.type === 'object' && field.ref) {
@@ -188,7 +188,7 @@ function renderTableRows(data) {
     const tbody = document.getElementById('dynamic-tbody');
     const noData = document.getElementById('no-data-msg');
     tbody.innerHTML = '';
-    
+
     if (!data || data.length === 0) {
         noData.style.display = 'block';
         return;
@@ -200,7 +200,7 @@ function renderTableRows(data) {
     data.forEach(row => {
         const tr = document.createElement('tr');
         let html = '';
-        
+
         tableSchema.fields.forEach(field => {
             let val = row[field.name];
             if(val === null || val === undefined) {
@@ -254,10 +254,10 @@ function buildForm(record) {
 
         const div = document.createElement('div');
         div.className = 'mb-3';
-        
+
         let label = `<label class="form-label fw-medium">${field.label}</label>`;
         let inputHtml = '';
-        
+
         const val = record[field.name] !== undefined && record[field.name] !== null ? record[field.name] : '';
 
         if (field.readonly) {
@@ -299,7 +299,7 @@ function saveRecord() {
 
     tableSchema.fields.forEach(field => {
         if(field.readonly && !editingId) return;
-        
+
         if (field.type === 'checkbox') {
             payload[field.name] = form.querySelector(`[name="${field.name}"]`).checked;
         } else if (field.type === 'object') {
@@ -323,14 +323,14 @@ function saveRecord() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
-    .then(res => {
-        if(res.ok) {
-            crudModal.hide();
-            showTable(activeTable); // Refresh table
-        } else {
-            alert('Failed to save record.');
-        }
-    });
+        .then(res => {
+            if(res.ok) {
+                crudModal.hide();
+                showTable(activeTable); // Refresh table
+            } else {
+                alert('Failed to save record.');
+            }
+        });
 }
 
 function promptDelete(id) {

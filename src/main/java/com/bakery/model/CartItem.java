@@ -1,8 +1,3 @@
-// ===================================================
-// CartItem.java  — com.bakery.model
-// One row = one product line inside a cart.
-// Links Cart  →  Product  with a quantity & subtotal.
-// ===================================================
 package com.bakery.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;

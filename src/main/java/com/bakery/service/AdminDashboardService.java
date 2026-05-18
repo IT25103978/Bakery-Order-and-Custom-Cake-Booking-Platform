@@ -2,6 +2,9 @@ package com.bakery.service;
 
 import com.bakery.model.Order;
 import com.bakery.repository.OrderRepository;
+import com.bakery.repository.UserRepository;
+import com.bakery.repository.ProductRepository;
+import com.bakery.repository.CustomCakeBookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,30 +18,26 @@ public class AdminDashboardService {
     @Autowired
     private OrderRepository orderRepository;
 
-    // Uncomment these when UserRepository, ProductRepository, etc. are available
-    // @Autowired private UserRepository userRepository;
-    // @Autowired private ProductRepository productRepository;
-    // @Autowired private CustomCakeBookingRepository customCakeRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CustomCakeBookingRepository customCakeRepository;
 
     public Map<String, Object> getDashboardSummary() {
         Map<String, Object> summary = new HashMap<>();
-        
-        // Mocking total counts for now since other repositories might not exist yet
+
         summary.put("totalOrders", orderRepository.count());
-        
-        // summary.put("totalProducts", productRepository.count());
-        summary.put("totalProducts", 86); // From PDF screenshot
-
-        // summary.put("totalUsers", userRepository.count());
-        summary.put("totalUsers", 124);
-
-        // summary.put("customCakeRequests", customCakeRepository.count());
-        summary.put("customCakeRequests", 27);
-
+        summary.put("totalProducts", productRepository.count());
+        summary.put("totalUsers", userRepository.count());
+        summary.put("customCakeRequests", customCakeRepository.count());
         summary.put("pendingOrders", orderRepository.countByOrderStatus("Pending"));
-        
+
         Double totalRevenue = orderRepository.calculateTotalRevenue();
-        summary.put("totalRevenue", totalRevenue != null ? totalRevenue : 124500.0);
+        summary.put("totalRevenue", totalRevenue != null ? totalRevenue : 0.0);
 
         return summary;
     }

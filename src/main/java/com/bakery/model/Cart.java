@@ -1,8 +1,3 @@
-// ===================================================
-// Cart.java  — com.bakery.model
-// Represents a shopping cart linked to a User.
-// One cart per user; contains a list of CartItems.
-// ===================================================
 package com.bakery.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;

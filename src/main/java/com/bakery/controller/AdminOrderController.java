@@ -11,6 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/orders")
+@CrossOrigin(origins = "*")
 public class AdminOrderController {
 
     @Autowired
@@ -42,15 +43,16 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String newStatus = body.get("status");
-        return ResponseEntity.ok(adminOrderService.updateOrderStatus(id, newStatus));
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        String newStatus = payload.get("status");
+        adminOrderService.updateOrderStatus(id, newStatus);
+        return ResponseEntity.ok().body("{\"message\": \"Status updated successfully\"}");
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+    public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
         adminOrderService.deleteOrder(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("{\"message\": \"Order deleted successfully\"}");
     }
 
     @GetMapping("/summary")

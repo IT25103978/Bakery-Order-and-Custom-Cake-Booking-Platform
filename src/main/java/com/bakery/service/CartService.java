@@ -4,7 +4,6 @@ import com.bakery.model.Cart;
 import com.bakery.model.CartItem;
 import com.bakery.model.Product;
 import com.bakery.model.User;
-import com.bakery.repository.CartItemRepository;
 import com.bakery.repository.CartRepository;
 import com.bakery.repository.ProductRepository;
 import com.bakery.repository.UserRepository;
