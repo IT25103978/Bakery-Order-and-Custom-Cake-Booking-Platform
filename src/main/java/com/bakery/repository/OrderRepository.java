@@ -22,6 +22,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByOrderStatus(String orderStatus, Pageable pageable);
 
-    @Query("SELECT o FROM Order o WHERE LOWER(o.user.firstName) LIKE LOWER(CONCAT('%',:searchTerm,'%')) OR LOWER(o.phoneNumber) LIKE LOWER(CONCAT('%',:searchTerm,'%')) OR CAST(o.orderId AS string) LIKE LOWER(CONCAT('%',:searchTerm,'%'))")
+    @Query("SELECT o FROM Order o WHERE LOWER(o.user.email) LIKE LOWER(CONCAT('%',:searchTerm,'%')) OR LOWER(o.phoneNumber) LIKE LOWER(CONCAT('%',:searchTerm,'%')) OR CAST(o.orderId AS string) LIKE LOWER(CONCAT('%',:searchTerm,'%'))")
     Page<Order> searchOrders(@Param("searchTerm") String searchTerm, Pageable pageable);
 }

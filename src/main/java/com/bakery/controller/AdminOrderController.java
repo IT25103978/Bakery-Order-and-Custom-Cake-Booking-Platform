@@ -42,9 +42,19 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
-        String newStatus = payload.get("status");
-        adminOrderService.updateOrderStatus(id, newStatus);
-        return ResponseEntity.ok().body("{\"message\": \"Status updated successfully\"}");
+    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String newStatus = body.get("status");
+        return ResponseEntity.ok(adminOrderService.updateOrderStatus(id, newStatus));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        adminOrderService.deleteOrder(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<Map<String, Long>> getOrderSummary() {
+        return ResponseEntity.ok(adminOrderService.getOrderSummary());
     }
 }

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -46,9 +48,22 @@ public class AdminOrderService {
         throw new RuntimeException(" Order not found for id :: " + id);
     }
 
-    public void updateOrderStatus(Long id, String status) {
-        Order order = getOrderById(id);
-        order.setOrderStatus(status);
-        orderRepository.save(order);
+    public Order updateOrderStatus(Long orderId, String newStatus) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setOrderStatus(newStatus);
+        return orderRepository.save(order);
+    }
+
+    public void deleteOrder(Long orderId) {
+        orderRepository.deleteById(orderId);
+    }
+
+    public Map<String, Long> getOrderSummary() {
+        Map<String, Long> summary = new HashMap<>();
+        summary.put("totalOrders", orderRepository.count());
+        summary.put("pending", orderRepository.countByOrderStatus("Pending"));
+        summary.put("preparing", orderRepository.countByOrderStatus("Preparing"));
+        summary.put("delivered", orderRepository.countByOrderStatus("Delivered"));
+        return summary;
     }
 }
