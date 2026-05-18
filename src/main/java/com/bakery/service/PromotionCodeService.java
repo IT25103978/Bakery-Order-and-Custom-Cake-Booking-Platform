@@ -58,6 +58,14 @@ public class PromotionCodeService {
         return repository.save(promotion);
     }
 
+    // Toggle active status
+    public PromotionCode toggleStatus(Long id) {
+        PromotionCode promotion = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Promotion code not found"));
+        promotion.setActive(!promotion.isActive());
+        return repository.save(promotion);
+    }
+
     // Delete promotion code
     public void deletePromotion(Long id) {
 

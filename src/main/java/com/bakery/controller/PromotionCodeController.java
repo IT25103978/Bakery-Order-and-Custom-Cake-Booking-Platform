@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/promotions")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class PromotionCodeController {
 
     @Autowired
@@ -39,8 +39,14 @@ public class PromotionCodeController {
         return service.updateDiscount(id, discountPercentage);
     }
 
+    // Toggle active status
+    @PostMapping("/toggle-status/{id}")
+    public PromotionCode toggleStatus(@PathVariable Long id) {
+        return service.toggleStatus(id);
+    }
+
     // Delete promotion code
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deletePromotion(@PathVariable Long id) {
 
         service.deletePromotion(id);
